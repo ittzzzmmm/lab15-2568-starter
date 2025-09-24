@@ -7,7 +7,7 @@ import {
   zStudentPutBody,
   zStudentId,
 } from "../schemas/studentValidator.js";
-import { type Student } from "../libs/types.js";
+import { type Course, type Student } from "../libs/types.js";
 import notFoundMiddleware from "../middlewares/notFoundMiddleware.js";
 
 const router = Router();
@@ -114,12 +114,10 @@ router.get("/:studentId/courses", (req : Request , res : Response)=>{
       });
     }
 
-    const courseRegistered = students[foundIndex]?.courses?.map((courseID)=>{
-        const courseIndex = courses.findIndex(
-            (course) => course.courseId === courseID
-        )
-        return courses[courseIndex]
-    })??[];
+    const courseRegistered = students[foundIndex]?.courses?.map((courseID)=>
+        courses.find((course)=>course.courseId===courseID)).filter((c): c is Course => c!==undefined)??[];
+       
+   
 
     const cleanedCourses = courseRegistered.map(({ instructors, ...rest }) => rest);
 
